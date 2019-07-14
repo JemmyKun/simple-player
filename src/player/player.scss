@@ -1,0 +1,136 @@
+@import "~antd/dist/antd.css";
+#root,
+.app-container {
+  height: 100%;
+}
+.video-container {
+  position: relative;
+  width: 500px;
+  height: 400px;
+  margin: 0 auto;
+  &.isFullScreen {
+    width: 100% !important;
+    height: 100% !important;
+    padding-top: 0 !important;
+  }
+  video {
+    background: #000;
+    width: 100%;
+    height: 100%;
+  }
+  .play-pause-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    .play-icon {
+      font-size: 32px;
+      color: #fff;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  .controls-bar-box {
+    position: absolute;
+    bottom: 0;
+    height: 46px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.7);
+  }
+  .play-progress {
+    height: 6px;
+    width: 100%;
+    .ant-slider {
+      position: relative;
+      height: 100%;
+      margin: 0 6px;
+      padding: 0;
+      &:before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        position: absolute;
+        left: -6px;
+        top: 0;
+        height: 4px;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+        background: #91d5ff;
+      }
+      &:after {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 4px;
+        border-radius: 4px;
+        position: absolute;
+        right: -6px;
+        top: 0;
+        background: #f5f5f5;
+      }
+    }
+  }
+  .play-controls-box {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+  .bar-left,
+  .bar-right {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    height: 100%;
+  }
+  .bar-left {
+    justify-content: flex-start;
+  }
+  .bar-right {
+    justify-content: flex-end;
+  }
+  .screen-box,
+  .play-btn-box {
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .screen-icon,
+    .play-icon {
+      font-size: 20px;
+      color: #fff;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  .volume-bar {
+    height: 100%;
+    width: 120px;
+    display: flex;
+    align-items: center;
+    .ant-slider {
+      width: 70px;
+    }
+    .volume-icon {
+      margin-right: 10px;
+      font-size: 18px;
+      color: #fff;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  .time-box {
+    color: #fff;
+    font-size: 12px;
+    .play-split {
+      margin: 0 5px;
+    }
+  }
+}
