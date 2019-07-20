@@ -18,6 +18,7 @@ class Player extends React.Component {
       progress: 0,
       playUrl: "https://media.w3.org/2010/05/sintel/trailer_hd.mp4"
     };
+    this.timer = null;
   }
   handleUpdate(e) {
     let duration = e.target.duration;
