@@ -8,7 +8,7 @@ class Player extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showControls: true,
+      isShowControl: true,
       showBtn: true,
       isPlaying: false,
       isFullScreen: false,
@@ -51,6 +51,13 @@ class Player extends React.Component {
     myAudio.volume = realVolume;
     this.setState({
       volume
+    });
+  }
+  toggleVolume() {
+    let { volume } = this.state;
+    let newVolume = volume !== 0 ? 0 : 50;
+    this.setState({
+      volume: newVolume
     });
   }
   handleProgress(progress) {
@@ -97,53 +104,56 @@ class Player extends React.Component {
       });
     }, 2000);
   }
-  handleMove() {
-    let { showControls } = this.state;
-    if (!showControls) {
-      this.setState(
-        {
-          showControls: true
-        },
-        () => {
-          setTimeout(() => {
-            this.setState({
-              showControls: false
-            });
-          }, 2000);
-        }
-      );
-    }
+  handleMouseMove() {
+    this.timer && window.clearTimeout(this.timer);
+    this.setState({ isShowControl: true }, () => {
+      this.timer = setTimeout(() => {
+        this.setState({ isShowControl: false });
+      }, 5000);
+    });
   }
+  toggleFullscreen() {
+    let videoWrapper = this.refs["myAudioBox"];
+    if (fullscreen.enabled) {
+      if (fullscreen.isFullscreen) {
+        fullscreen.exit();
+        this.setState({
+          isFullScreen: false
+        });
+      } else {
+        fullscreen.request(videoWrapper);
+        this.setState({
+          isFullScreen: true
+        });
+      }
+      this.change("remove", e => {
+        console.log("remove!!!");
+      });
 
-  enterFullScreen() {
-    let videoWrapper = this.refs["myAudio"];
-    let requestMethod =
-      videoWrapper.requestFullScreen || //W3C
-      videoWrapper.webkitRequestFullScreen || //FireFox
-      videoWrapper.mozRequestFullScreen || //Chrome等
-      videoWrapper.msRequestFullScreen; //IE11
-    if (requestMethod) {
-      requestMethod.call(videoWrapper);
-      this.setState({
-        isFullScreen: true
+      this.change("add", e => {
+        let width = e.target.clientWidth;
+        let docWidth = window.innerWidth;
+        let isFullScreen = width === docWidth ? true : false;
+        this.setState({
+          isFullScreen
+        });
       });
     }
   }
-
-  exitFullscreen() {
-    let exitMethod =
-      document.webkitCancelFullScreen ||
-      document.exitFullscreen ||
-      document.mozExitFullScreen;
-    if (exitMethod) {
-      exitMethod.call(document);
-      this.setState({
-        isFullScreen: false
-      });
-    }
+  change(type, callback) {
+    let vendors = [
+      "fullscreenchange",
+      "mozfullscreenchange",
+      "MSFullscreenChange",
+      "webkitfullscreenchange"
+    ];
+    vendors.forEach(function(vendor) {
+      return document[type + "EventListener"](vendor, callback);
+    });
   }
+
   render() {
-    let { showBtn, playUrl, showControls } = this.state;
+    let { showBtn, playUrl, isShowControl } = this.state;
     let {
       progress,
       isPlaying,
@@ -157,10 +167,11 @@ class Player extends React.Component {
 
     return (
       <div
+        id="myAudioBox"
+        ref="myAudioBox"
         className={"video-container " + fullClass}
-        onMouseEnter={this.handleEnter.bind(this)}
-        onMouseLeave={this.handleLeave.bind(this)}
-        onMouseMove={this.handleMove.bind(this)}
+        onDoubleClick={this.toggleFullscreen.bind(this)}
+        onMouseMove={this.handleMouseMove.bind(this)}
       >
         <video
           preload={"true"}
@@ -186,7 +197,7 @@ class Player extends React.Component {
         </div>
         <div
           className="controls-bar-box"
-          style={{ display: showControls ? "block" : "none" }}
+          style={{ display: isShowControl ? "block" : "none" }}
         >
           <div className="play-progress">
             <Slider
@@ -213,7 +224,11 @@ class Player extends React.Component {
             </div>
             <div className="bar-right">
               <div className="volume-bar">
-                <Icon type="sound" className="volume-icon" />
+                <Icon
+                  type="sound"
+                  className="volume-icon"
+                  onClick={this.toggleVolume.bind(this)}
+                />
                 <Slider
                   step={0.01}
                   value={volume}
@@ -223,21 +238,12 @@ class Player extends React.Component {
                 />
               </div>
               <div className="screen-box">
-                {isFullScreen ? (
-                  <Icon
-                    title={isFullScreen ? "退出全屏" : "全屏"}
-                    className="screen-icon"
-                    type="fullscreen-exit"
-                    onClick={this.exitFullscreen.bind(this)}
-                  />
-                ) : (
-                  <Icon
-                    title={isFullScreen ? "退出全屏" : "全屏"}
-                    className="screen-icon"
-                    type="fullscreen"
-                    onClick={this.enterFullScreen.bind(this)}
-                  />
-                )}
+                <Icon
+                  title={isFullScreen ? "退出全屏" : "全屏"}
+                  className={isFullScreen ? "screen-icon" : "screen-icon"}
+                  type={isFullScreen ? "fullscreen-exit" : "fullscreen"}
+                  onClick={this.toggleFullscreen.bind(this)}
+                />
               </div>
             </div>
           </div>
