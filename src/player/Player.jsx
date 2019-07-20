@@ -93,18 +93,6 @@ class Player extends React.Component {
       isPlaying: !isPlaying
     });
   }
-  handleEnter() {
-    this.setState({
-      showControls: true
-    });
-  }
-  handleLeave() {
-    setTimeout(() => {
-      this.setState({
-        showControls: false
-      });
-    }, 2000);
-  }
   handleMouseMove() {
     this.timer && window.clearTimeout(this.timer);
     this.setState({ isShowControl: true }, () => {
